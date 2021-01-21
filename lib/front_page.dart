@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:flutter/services.dart';
-
-const Color pageBackgroundColor = Color(0xff20061A);
-const Color mainColor2 = Color(0xff401133);
-const Color mainColor3 = Color(0xff240129);
+import 'alert_button.dart';
+import 'constants.dart';
+import 'dialogue_button.dart';
+import 'rectangle_button.dart';
 
 class QuizFrontPage extends StatefulWidget {
   @override
@@ -13,15 +12,12 @@ class QuizFrontPage extends StatefulWidget {
 }
 
 class _QuizFrontPageState extends State<QuizFrontPage> {
-
-  final _formKey = GlobalKey<FormState>();
-  final myController = TextEditingController();
-  final input = RegExp('[a-zA-Z]');
+  AlertForm friendForm;
   String name;
 
   @override
   void dispose() {
-    myController.dispose();
+    friendForm.myController.dispose();
     super.dispose();
   }
 
@@ -32,118 +28,93 @@ class _QuizFrontPageState extends State<QuizFrontPage> {
       DeviceOrientation.portraitDown,
     ]);
     return Scaffold(
-        backgroundColor: pageBackgroundColor,
-        appBar: AppBar(
-          backgroundColor: pageBackgroundColor,
-          title: Center(
-            child: Text(
-              'Quizzler_X',
-              style: TextStyle(
-                fontSize: 15.0,
+      backgroundColor: kFrontPageBackground,
+      appBar: AppBar(
+        backgroundColor: kFrontPageBackground,
+        title: Center(
+          child: Text(
+            'Quizzler_X',
+            style: kAppBarTextStyle,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        // child: SingleChildScrollView (
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(15.0),
+                child: Text(
+                  'Test your knowledge on',
+                  textAlign: TextAlign.center,
+                  style: kFrontPageTextStyle,
+                ),
               ),
             ),
-          ),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              // mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 100.0),
-                  child: Center(
-                    child: Text(
-                      'Test your knowledge on',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Card(
-                    margin: EdgeInsets.symmetric(horizontal: 50.0),
-                    color: Colors.teal[900],
-                    child: FlatButton(
-                      child: Text(
-                        'Laws and Rights',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/lawSecond', arguments: null);
-                      },
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Card(
-                    margin: EdgeInsets.symmetric(horizontal: 50.0),
-                    color: Colors.teal[900],
-                    child: FlatButton(
-                      child: Text(
-                        'Friend',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onPressed: () {
-                        Alert(
-                            context: context,
-                            title: 'Enter your friend\'s name',
-                            content: Form(
-                              key: _formKey,
-                              child: TextFormField(
-                                controller: myController,
-                                decoration: InputDecoration(
-                                  icon: Icon(
-                                      Icons.person,
-                                  ),
-                                  // labelText: 'Friend\'s name',
-                                ),
-                                validator: (String text) {
-                                  if (!input.hasMatch(text)) {
-                                    return 'Enter a name';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            buttons: [
-                              DialogButton(
-                                child: Text(
-                                  'Continue',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  if (_formKey.currentState.validate()) {
-                                    name = myController.text ;
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/friendQuiz',
-                                      arguments: '${name[0].toUpperCase()}${name.substring(1)}',
-                                    );
-                                    print(name);
-                                  }
-                                },
-                              ),
-                            ]).show();
-                      },
-                    ),
-                  ),
-                ),
-              ],
+            SizedBox(
+              height: 20.0,
             ),
-          ),
+            Expanded(
+              flex: -2,
+              child: RectangleButton(
+                quizTypeText: 'Laws and Rights',
+                onPressed: () {
+                  Navigator.pushNamed(context, '/lawSecond', arguments: null);
+                },
+              ),
+            ),
+            SizedBox(
+              height: 30.0,
+            ),
+            Expanded(
+              flex: -2,
+              child: RectangleButton(
+                quizTypeText: 'Friend',
+                onPressed: () {
+                  Alert(
+                      context: context,
+                      title: 'Enter your friend\'s name',
+                      content: friendForm = AlertForm(
+                        inputRegex: RegExp('[a-zA-Z]'),
+                        errorText: 'Enter a name',
+                        iconType: Icons.person,
+                      ),
+                      buttons: [
+                        DialogueButton(
+                          dialogueButtonTitle: 'Continue',
+                          onPressed: () {
+                            if (friendForm.formKey.currentState.validate()) {
+                              name = friendForm.myController.text;
+                              Navigator.pushNamed(
+                                context,
+                                '/friendQuiz',
+                                arguments:
+                                '${name[0].toUpperCase()}${name.substring(1)}',
+                              );
+                              print(name);
+                            }
+                          },
+                        ),
+                      ]).show();
+                },
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(),
+            ),
+          ],
         ),
+      ),
+      // ),
     );
   }
 }
+
+
+

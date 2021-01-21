@@ -1,12 +1,11 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:quizzler_x/friend_score_page.dart';
-import 'package:quizzler_x/quiz_App_Brain.dart';
+import 'dialogue_button.dart';
+import 'friend_score_page.dart';
+import 'quiz_App_Brain.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-const Color purpleShade1 = Color(0xff934379);
 
 class QuizApp extends StatefulWidget {
   final QuizType quizType;
@@ -31,6 +30,11 @@ class _QuizAppState extends State<QuizApp> {
     playLoop();
   }
 
+  @override
+  void dispose() {
+    instance.dispose();
+    super.dispose();
+  }
   static QuizAppBrain quizBrain;
   static String userFriend;
 
@@ -58,22 +62,14 @@ class _QuizAppState extends State<QuizApp> {
       instance.dispose();
       Alert(
         context: context,
-        title: 'QUIZZLER',
+        title: 'Quizzler_x',
         desc: 'The End',
         buttons: [
-          DialogButton(
-            child: Text(
-              'Continue',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          DialogueButton(
+            dialogueButtonTitle: 'Continue',
             onPressed: () {
-              // Navigator.pushNamed(context, '/friendQuizScores');
               Navigator.pushNamed(context, '/friendQuizScores',
-                  arguments: StoreArguments(
+                  arguments: ArgumentStore(
                       answersForFriend, userFriend, quizBrain.friendQuestionBank));
             },
           ),
@@ -92,18 +88,11 @@ class _QuizAppState extends State<QuizApp> {
       instance.dispose();
       Alert(
         context: context,
-        title: 'QUIZZLER',
-        desc: 'You were correct $userCorrectAnswers times',
+        title: 'Quizzler_x',
+        desc: 'You got $userCorrectAnswers out of $totalQuestions',
         buttons: [
-          DialogButton(
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          DialogueButton(
+            dialogueButtonTitle: 'Restart',
             onPressed: () {
               quizBrain.reset();
               scoreTracker.removeRange(0, scoreTracker.length);

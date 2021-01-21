@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:quizzler_x/constants.dart';
 
 class LawsSecondPage extends StatelessWidget {
-  final Color purpleShade2 = Color(0xff34975);
+
   @override
   Widget build(BuildContext context) {
 
@@ -20,10 +21,7 @@ class LawsSecondPage extends StatelessWidget {
                 child: Text(
                   'So you think you know your civil rights...',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white60,
-                  ),
+                  style: kLawSecondPageTextStyle,
                 ),
               ),
             ),

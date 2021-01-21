@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:quizzler_x/friend_score_page.dart';
 import 'display_rating_page.dart';
+import 'friend_score_page.dart';
 import 'quiz_page.dart';
 import 'front_page.dart';
 import 'laws_second_page.dart';
@@ -28,7 +28,7 @@ void main() {
               QuizAppUI(QuizType.Rights, ModalRoute.of(context).settings.arguments),
           '/friendQuiz': (context) =>
               QuizAppUI(QuizType.Friend, ModalRoute.of(context).settings.arguments),
-          '/friendQuizScores': (context) => ShowScores(ModalRoute.of(context).settings.arguments),
+          '/friendQuizScores': (context) => FriendScorePage(ModalRoute.of(context).settings.arguments),
           '/displayRating': (context) =>
               DisplayRating(ModalRoute.of(context).settings.arguments),
           //TODO: Collate and update quiz for the civil rights question bank

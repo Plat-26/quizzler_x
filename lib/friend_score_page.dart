@@ -1,33 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:quizzler_x/question.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'alert_button.dart';
+import 'dialogue_button.dart';
+import 'question.dart';
 
-class StoreArguments {
+
+class ArgumentStore {
   List<bool> userAnswers;
   String friendName;
   List<Question> questions;
 
-  StoreArguments(this.userAnswers, this.friendName, this.questions);
+  ArgumentStore(this.userAnswers, this.friendName, this.questions);
 }
 
-class ShowScores extends StatefulWidget {
-  final StoreArguments userData;
-  ShowScores(this.userData);
+class FriendScorePage extends StatefulWidget {
+  final ArgumentStore userData;
+  FriendScorePage(this.userData);
 
   @override
-  _ShowScoresState createState() => _ShowScoresState(userData);
+  _FriendScorePageState createState() => _FriendScorePageState(userData);
 }
 
-class _ShowScoresState extends State<ShowScores> {
-  StoreArguments data;
+class _FriendScorePageState extends State<FriendScorePage> {
+  ArgumentStore data;
   List<bool> userAnswers;
 
   String friendName;
 
   List<Question> questions;
 
-  _ShowScoresState(StoreArguments userData) {
+  _FriendScorePageState(ArgumentStore userData) {
     userAnswers = userData.userAnswers;
 
     friendName = userData.friendName;
@@ -35,20 +38,21 @@ class _ShowScoresState extends State<ShowScores> {
     questions = userData.questions;
   }
 
-  final _formKey = GlobalKey<FormState>();
-
-  final myController = TextEditingController();
-
-  final input = RegExp('[0-5]');
-
   static int userRating = 0;
-
   static int displayCount = 0;
+
+  AlertForm friendScoreForm;
 
   @override
   initState() {
     super.initState();
     display();
+  }
+
+  @override
+  void dispose() {
+    friendScoreForm.myController.dispose();
+    super.dispose();
   }
 
   String showQuestion() {
@@ -101,38 +105,18 @@ class _ShowScoresState extends State<ShowScores> {
             Alert(
                 context: context,
                 title: 'How many stars did you get?',
-                content: Form(
-                  key: _formKey,
-                  child: TextFormField(
-                    controller: myController,
-                    decoration: InputDecoration(
-                      icon: Icon(
-                        Icons.star,
-                        color: Colors.black,
-                      ),
-                      // labelText: 'Your rating',
-                    ),
-                    validator: (String text) {
-                      if (!input.hasMatch(text)) {
-                        return 'Please enter a number from 0 - 5';
-                      }
-                      return null;
-                    },
+                content: friendScoreForm = AlertForm(
+                  iconType: Icons.star,
+                  errorText: 'Please enter a number from 0 - 5',
+                  inputRegex: RegExp('[0-5]'),
                   ),
-                ),
                 buttons: [
-                  DialogButton(
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
+                  DialogueButton(
+                    dialogueButtonTitle: 'Continue',
                     onPressed: () {
                       show.removeRange(0, show.length);
-                      if (_formKey.currentState.validate()) {
-                        userRating = int.parse(myController.text);
+                      if (friendScoreForm.formKey.currentState.validate()) {
+                        userRating = int.parse(friendScoreForm.myController.text);
                         print(userRating);
                         Navigator.pushNamed(
                           context,
